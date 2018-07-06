@@ -1,0 +1,4 @@
+node_modules/
+service/*.png
+service/*.jpg
+service/*.jpeg
