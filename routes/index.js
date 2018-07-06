@@ -8,6 +8,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+
 router.post('/upload', (req, res) => {
   const tasks = [
     (callback) => {
@@ -24,16 +25,17 @@ router.post('/upload', (req, res) => {
     },
     (files, fields, callback) => {
       console.log('start s3');
+      console.log('callback');
       Upload.s3(files, 'test/', (err, result) => {
-        console.log('err : ' + err);
-        console.log('result : ' + result);
         callback(err, result)
       });
     }
   ];
   async.waterfall(tasks, (err, result) => {
     if (!err) {
-      res.json({success: true, msg: '업로드 성공'})
+      console.log(result);
+      res.render('resultPage', { title: '업로드 성공', image: result });
+      // res.json({success: true, msg: '업로드 성공'})
     } else {
       res.json({success: false, msg: '업로드 실패'})
     }

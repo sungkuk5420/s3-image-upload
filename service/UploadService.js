@@ -3,11 +3,20 @@ const async = require('async');
 const AWS = require('aws-sdk');
 const imagemin = require('imagemin');
 const imageminPngquant = require('imagemin-pngquant');
+
+
 AWS.config.update({
-    accessKeyId: "",
-    secretAccessKey: "",
-    "region": "ap-northeast-2"  
+  accessKeyId: "",
+  secretAccessKey: "",
+  "region": "ap-northeast-2"
 });
+/*S3 버킷 설정*/
+let params = {
+  Bucket: '',
+  ACL: 'public-read',
+  Body: null
+};
+
 const S3 = new S3Instance();
 const ROOT_PATH = process.cwd();
 const Upload = {};
@@ -22,13 +31,6 @@ function S3Instance() {
   return instance
 }
 
-/*S3 버킷 설정*/
-let params = {
-  Bucket: '',
-  Key: '',
-  ACL: 'public-read',
-  Body: null
-};
 
 Upload.formidable = (req, callback) => {
   let _fields;
@@ -43,7 +45,7 @@ Upload.formidable = (req, callback) => {
     instance = new formidable.IncomingForm({
       encoding: 'utf-8',
       multiples: true,
-      keepExtensions: false, //확장자 제거
+      keepExtensions: true, //확장자 제거
       uploadDir: `${ROOT_PATH}/service`
     });
     
@@ -85,7 +87,7 @@ Upload.s3 = (files, key, callback) => {
     params.Body = require('fs').createReadStream(file.path);
   
     S3.upload(params, (err, result) => {
-      cb(err, result);
+      callback(err, result);
     });
   }, (err, result) => {
     callback(err, result);
